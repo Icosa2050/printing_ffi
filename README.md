@@ -63,6 +63,8 @@ flutter pub get
 
 ### macOS Setup 🍎
 
+Flutter 3.44 and later can build the plugin with Swift Package Manager automatically. The SwiftPM build embeds `printing-ffi.framework`; CocoaPods builds continue to embed `printing_ffi.framework`. The manual Podfile and `pod install` steps below apply only to projects using CocoaPods.
+
 1.  **Install CUPS dependencies**:
 
     ```bash
@@ -75,7 +77,7 @@ flutter pub get
     sudo launchctl start org.cups.cupsd
     ```
 
-3.  **Update `macos/Podfile`** to include the `printing_ffi` plugin. Use the following `Podfile`:
+3.  **For CocoaPods projects, update `macos/Podfile`** to include the `printing_ffi` plugin. Use the following `Podfile`:
 
     ```ruby
     platform :osx, '10.15'
@@ -119,14 +121,14 @@ flutter pub get
     end
     ```
 
-4.  **Run `pod install`** in the `macos` directory:
+4.  **For CocoaPods projects, run `pod install`** in the `macos` directory:
 
     ```bash
     cd macos
     pod install
     ```
 
-5.  **Verify `printing_ffi.framework`**: Ensure it's built and included in `macos/Flutter/ephemeral/.app`.
+5.  **Verify the framework**: Check that the app embeds `printing-ffi.framework` with SwiftPM or `printing_ffi.framework` with CocoaPods.
 
 ### Windows Setup 🪟
 
