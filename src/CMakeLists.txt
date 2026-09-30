@@ -38,6 +38,6 @@ if(APPLE)
 elseif(UNIX AND NOT ANDROID)
     # On Linux, find CUPS using pkg-config
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(CUPS REQUIRED cups)
-    target_link_libraries(printing_ffi PUBLIC PkgConfig::CUPS)
+    pkg_check_modules(CUPS REQUIRED IMPORTED_TARGET cups)
+    target_link_libraries(printing_ffi PRIVATE PkgConfig::CUPS)
 endif()
