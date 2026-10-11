@@ -115,16 +115,23 @@ class PrintingFfi {
 
   static const String _libName = 'printing_ffi';
 
-  static final DynamicLibrary _dylib = () {
-    if (Platform.isMacOS) {
-      // For FFI plugins, the library is named lib<name>.dylib in the test environment,
-      // but is embedded in a framework when running in a Flutter app.
+  static DynamicLibrary _openMacOSLibrary() {
+    try {
+      return DynamicLibrary.open('lib$_libName.dylib');
+    } catch (_) {
+      // In an app, SwiftPM uses a hyphenated product name while CocoaPods
+      // retains the original framework name.
       try {
-        return DynamicLibrary.open('lib$_libName.dylib');
+        return DynamicLibrary.open('printing-ffi.framework/printing-ffi');
       } catch (_) {
-        // Fallback for app environment
         return DynamicLibrary.open('$_libName.framework/$_libName');
       }
+    }
+  }
+
+  static final DynamicLibrary _dylib = () {
+    if (Platform.isMacOS) {
+      return _openMacOSLibrary();
     }
     if (Platform.isLinux) return DynamicLibrary.open('lib$_libName.so');
     if (Platform.isWindows) return DynamicLibrary.open('$_libName.dll');
@@ -1045,7 +1052,7 @@ void _helperIsolateEntryPoint(SendPort sendPort) {
       }
       final dylib = () {
         if (Platform.isMacOS) {
-          return DynamicLibrary.open('${PrintingFfi._libName}.framework/${PrintingFfi._libName}');
+          return PrintingFfi._openMacOSLibrary();
         }
         if (Platform.isLinux) return DynamicLibrary.open('lib${PrintingFfi._libName}.so');
         if (Platform.isWindows) return DynamicLibrary.open('${PrintingFfi._libName}.dll');
